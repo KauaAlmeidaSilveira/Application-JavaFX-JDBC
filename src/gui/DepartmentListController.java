@@ -90,6 +90,7 @@ public class DepartmentListController implements Initializable{
 			//MOSTRA OS DADOS DO DEPARTAMENTO, NO TXT, QUE DESEJA ALTERAR
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(obj);
+			controller.setDepartmentService(new DepartmentService());
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();

@@ -19,6 +19,12 @@ public class Constraints {
 	        }
 	    });
 	}
+	
+	public static void setTextFieldEmpty(TextField txt) {
+		txt.textProperty().addListener((obs, oldValue, newValue) -> {
+	        	txt.setText("");
+	    });
+	}
 
 	public static void setTextFieldDouble(TextField txt) {
 		txt.textProperty().addListener((obs, oldValue, newValue) -> {
