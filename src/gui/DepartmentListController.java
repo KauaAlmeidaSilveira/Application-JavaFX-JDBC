@@ -40,10 +40,10 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	private TableView<Department> tableViewDepartment;
 
 	@FXML
-	private TableColumn<Department, Integer> tableColumnId;
+	private TableColumn<Department, Integer> TableColumnId;
 
 	@FXML
-	private TableColumn<Department, String> tableColumnName;
+	private TableColumn<Department, String> TableColumnName;
 
 	@FXML
 	private TableColumn<Department, Department> tableColumnEDIT;
@@ -73,20 +73,27 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	}
 
 	private void initializeNodes() {
-		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		TableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
+		// PEGA UMA REFERENCIA DO PALCO PRINCIPAL
 		Stage stage = (Stage) Main.getMainScene().getWindow();
+		// REDIMENSIONA A TABLEVIEW DE ACORDO COM O PALCO
 		tableViewDepartment.prefHeightProperty().bind(stage.heightProperty());
+		tableViewDepartment.prefWidthProperty().bind(stage.widthProperty());
 	}
 
 	public void updateTableView() {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
+
 		List<Department> list = service.findAll();
+		// SALVA OS DADOS DA LIST NA OBSLIST
 		obsList = FXCollections.observableArrayList(list);
+
 		tableViewDepartment.setItems(obsList);
+		// CRIA UM BOTÃO PARA CADA ITEM
 		initEditButtons();
 		initRemoveButtons();
 	}
@@ -96,19 +103,25 @@ public class DepartmentListController implements Initializable, DataChangeListen
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 
+			// JOGA OS DADOS NA TXTField
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(obj);
 			controller.setDepartmentService(new DepartmentService());
+			// reponsavel por realizar a inscrição na list de DataChangedListener
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");
 			dialogStage.setScene(new Scene(pane));
+			// A JANELA NÃO PODE SER REDIMENSIONADA
 			dialogStage.setResizable(false);
+			// DEFINE O STAGE 'PAI' DA JANELA
 			dialogStage.initOwner(parentStage);
+			// TRAVA NA TELA, SEM PODER ACESSAR OUTRAS JANELAS
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
@@ -154,23 +167,27 @@ public class DepartmentListController implements Initializable, DataChangeListen
 				setGraphic(button);
 				button.setOnAction(event -> removeEntity(obj));
 			}
+
+			
 		});
 	}
-
+	
 	private void removeEntity(Department obj) {
 		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
-
-		if (result.get() == ButtonType.OK) {
-			if (service == null) {
+		
+		if(result.get() == ButtonType.OK) {
+			if(service == null) {
 				throw new IllegalStateException("Service was null");
 			}
 			try {
 				service.remove(obj);
 				updateTableView();
 			}
-			catch (DbIntegrityException e) {
+			catch(DbIntegrityException e) {
 				Alerts.showAlert("Error removing object", null, e.getMessage(), AlertType.ERROR);
 			}
+			
 		}
 	}
+
 }

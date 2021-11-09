@@ -42,20 +42,20 @@ public class SellerListController implements Initializable, DataChangeListener {
 	private TableView<Seller> tableViewSeller;
 
 	@FXML
-	private TableColumn<Seller, Integer> tableColumnId;
+	private TableColumn<Seller, Integer> TableColumnId;
 
 	@FXML
-	private TableColumn<Seller, String> tableColumnName;
+	private TableColumn<Seller, String> TableColumnName;
 	
 	@FXML
-	private TableColumn<Seller, String> tableColumnEmail;
+	private TableColumn<Seller, String> TableColumnEmail;
 	
 	@FXML
-	private TableColumn<Seller, Date> tableColumnBirthDate;
+	private TableColumn<Seller, Date> TableColumnBirthDate;
 	
 	@FXML
-	private TableColumn<Seller, Double> tableColumnBaseSalary;
-
+	private TableColumn<Seller, Double> TableColumnBaseSalary;
+	
 	@FXML
 	private TableColumn<Seller, Seller> tableColumnEDIT;
 
@@ -84,25 +84,32 @@ public class SellerListController implements Initializable, DataChangeListener {
 	}
 
 	private void initializeNodes() {
-		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
-		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
-		tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
-		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
-		
+		TableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		TableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		TableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		Utils.formatTableColumnDate(TableColumnBirthDate, "dd/MM/yyyy");
+		TableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+		Utils.formatTableColumnDouble(TableColumnBaseSalary, 2);
+
+		// PEGA UMA REFERENCIA DO PALCO PRINCIPAL
 		Stage stage = (Stage) Main.getMainScene().getWindow();
+		// REDIMENSIONA A TABLEVIEW DE ACORDO COM O PALCO
 		tableViewSeller.prefHeightProperty().bind(stage.heightProperty());
+		tableViewSeller.prefWidthProperty().bind(stage.widthProperty());
 	}
 
 	public void updateTableView() {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
+
 		List<Seller> list = service.findAll();
+		// SALVA OS DADOS DA LIST NA OBSLIST
 		obsList = FXCollections.observableArrayList(list);
+
 		tableViewSeller.setItems(obsList);
+		// CRIA UM BOTÃO PARA CADA ITEM
 		initEditButtons();
 		initRemoveButtons();
 	}
@@ -112,20 +119,26 @@ public class SellerListController implements Initializable, DataChangeListener {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 
+			// JOGA OS DADOS NA TXTField
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
 			controller.setServices(new SellerService(), new DepartmentService());
 			controller.loadAssociatedObjects();
+			// reponsavel por realizar a inscrição na list de DataChangedListener
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Seller data");
 			dialogStage.setScene(new Scene(pane));
+			// A JANELA NÃO PODE SER REDIMENSIONADA
 			dialogStage.setResizable(false);
+			// DEFINE O STAGE 'PAI' DA JANELA
 			dialogStage.initOwner(parentStage);
+			// TRAVA NA TELA, SEM PODER ACESSAR OUTRAS JANELAS
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
@@ -171,23 +184,27 @@ public class SellerListController implements Initializable, DataChangeListener {
 				setGraphic(button);
 				button.setOnAction(event -> removeEntity(obj));
 			}
+
+			
 		});
 	}
-
+	
 	private void removeEntity(Seller obj) {
 		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
-
-		if (result.get() == ButtonType.OK) {
-			if (service == null) {
+		
+		if(result.get() == ButtonType.OK) {
+			if(service == null) {
 				throw new IllegalStateException("Service was null");
 			}
 			try {
 				service.remove(obj);
 				updateTableView();
 			}
-			catch (DbIntegrityException e) {
+			catch(DbIntegrityException e) {
 				Alerts.showAlert("Error removing object", null, e.getMessage(), AlertType.ERROR);
 			}
+			
 		}
 	}
+
 }

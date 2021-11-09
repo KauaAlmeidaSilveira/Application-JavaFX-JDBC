@@ -23,10 +23,9 @@ import model.entities.Department;
 import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
-public class DepartmentFormController implements Initializable {
+public class DepartmentFormController implements Initializable{
 
 	private Department entity;
-	
 	private DepartmentService service;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
@@ -38,7 +37,7 @@ public class DepartmentFormController implements Initializable {
 	private TextField txtName;
 	
 	@FXML
-	private Label labelErrorName;
+	private Label lbErrorName;
 	
 	@FXML
 	private Button btSave;
@@ -60,28 +59,28 @@ public class DepartmentFormController implements Initializable {
 	
 	@FXML
 	public void onBtSaveAction(ActionEvent event) {
-		if (entity == null) {
+		if(entity == null) {
 			throw new IllegalStateException("Entity was null");
 		}
-		if (service == null) {
+		if(service == null) {
 			throw new IllegalStateException("Service was null");
 		}
 		try {
 			entity = getFormData();
 			service.saveOrUpdate(entity);
+			//RESPOSAVEL POR EMITIR O EVENTO
 			notifyDataChangeListeners();
+			//FECHA A JANELA
 			Utils.currentStage(event).close();
-		}
-		catch (ValidationException e) {
+		}catch(DbException e) {
+			Alerts.showAlert("Error Saving object", null, e.getMessage(), AlertType.ERROR);
+		}catch(ValidationException e) {
 			setErrorMessages(e.getErrors());
-		}
-		catch (DbException e) {
-			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
 	private void notifyDataChangeListeners() {
-		for (DataChangeListener listener : dataChangeListeners) {
+		for(DataChangeListener listener : dataChangeListeners) {
 			listener.onDataChanged();
 		}
 	}
@@ -93,12 +92,13 @@ public class DepartmentFormController implements Initializable {
 		
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 		
-		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
+		//TRIM SERVE PARA REMOVER OS ESPAÇOS
+		if(txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "Field can't be empty");
 		}
 		obj.setName(txtName.getText());
 		
-		if (exception.getErrors().size() > 0) {
+		if(exception.getErrors().size() > 0) {
 			throw exception;
 		}
 		
@@ -107,6 +107,7 @@ public class DepartmentFormController implements Initializable {
 
 	@FXML
 	public void onBtCancelAction(ActionEvent event) {
+		//FECHA A JANELA
 		Utils.currentStage(event).close();
 	}
 	
@@ -114,14 +115,14 @@ public class DepartmentFormController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
 	}
-	
+
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtName, 30);
 	}
 	
 	public void updateFormData() {
-		if (entity == null) {
+		if(entity == null) {
 			throw new IllegalStateException("Entity was null");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
@@ -131,8 +132,11 @@ public class DepartmentFormController implements Initializable {
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 		
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
+		//SETA O LBERRORNAME COM O ERRO EM STRING
+		if(fields.contains("name")) {
+			lbErrorName.setText(errors.get("name"));
 		}
+		
 	}
+	
 }

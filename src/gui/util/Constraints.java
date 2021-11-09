@@ -19,7 +19,6 @@ public class Constraints {
 	        }
 	    });
 	}
-	
 
 	public static void setTextFieldDouble(TextField txt) {
 		txt.textProperty().addListener((obs, oldValue, newValue) -> {

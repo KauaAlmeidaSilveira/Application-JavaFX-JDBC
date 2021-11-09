@@ -11,7 +11,15 @@ public class SellerService {
 	private SellerDao dao = DaoFactory.createSellerDao();
 	
 	public List<Seller> findAll(){
+		
 		return dao.findAll();
+		
+		/*REALIZANDO MOCK, OU SEJA, UTILIZANDO DADOS DE MENTIRA
+		List<Seller> list = new ArrayList<>();
+		list.add(new Seller(1, "Books"));
+		list.add(new Seller(2, "Computers"));
+		list.add(new Seller(3, "Music"));
+		return list;*/
 	}
 	
 	public void saveOrUpdate(Seller obj) {
@@ -22,9 +30,8 @@ public class SellerService {
 		}
 	}
 	
-	public void remove(Seller obj) {
+	public void remove(Seller obj){
 		dao.deleteById(obj.getId());
 	}
-	
 	
 }

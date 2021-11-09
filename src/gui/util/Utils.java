@@ -16,8 +16,8 @@ import javafx.util.StringConverter;
 
 public class Utils {
 
-	// ACESSA O STAGE ATUAL
 	public static Stage currentStage(ActionEvent event) {
+		// PEGA A REFERENCIA DO STAGE DO EVENT
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
 	}
 
@@ -27,6 +27,7 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return null;
 		}
+
 	}
 	
 	public static Double tryParseToDouble(String str) {
@@ -35,9 +36,9 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return null;
 		}
+
 	}
 
-	// FORMATA AS DATAS
 	public static <T> void formatTableColumnDate(TableColumn<T, Date> tableColumn, String format) {
 		tableColumn.setCellFactory(column -> {
 			TableCell<T, Date> cell = new TableCell<T, Date>() {
@@ -57,7 +58,6 @@ public class Utils {
 		});
 	}
 
-	// FORMATA OS VALORES DOUBLE
 	public static <T> void formatTableColumnDouble(TableColumn<T, Double> tableColumn, int decimalPlaces) {
 		tableColumn.setCellFactory(column -> {
 			TableCell<T, Double> cell = new TableCell<T, Double>() {

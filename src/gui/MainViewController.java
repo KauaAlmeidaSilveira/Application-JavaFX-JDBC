@@ -30,7 +30,6 @@ public class MainViewController implements Initializable{
 	@FXML
 	private MenuItem menuItemAbout;
 	
-	@FXML
 	public void onMenuItemSellerAction() {
 		loadView("/gui/SellerList.fxml", (SellerListController controller) -> {
 			controller.setSellerService(new SellerService());
@@ -38,46 +37,52 @@ public class MainViewController implements Initializable{
 		});
 	}
 	
-	@FXML
 	public void onMenuItemDepartmentAction() {
 		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
 			controller.setDepartmentService(new DepartmentService());
 			controller.updateTableView();
 		});
 	}
-	
-	@FXML
+
 	public void onMenuItemAboutAction() {
 		loadView("/gui/About.fxml", x -> {});
 	}
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		
 	}
 	
-	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction){
+	//CARREGA UMA TELA - synchronized serve para impedir que o método seja interrompido
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
+		
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			VBox newVBox = loader.load();
 			
+			//PEGANDO A REFERENCIA DA CENA
 			Scene mainScene = Main.getMainScene();
+			
+			//GUARDA A REFERENCIA DO VBox DA TELA PRINCIPAL
+			//GETROOT PEGA O PRIMEIRO ELEMENTO DA VIEW
 			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
 			
+			//PEGA O PRIMEIRO FILHO NA VBox QUE NESTE CASO É O MENUBAR
 			Node mainMenu = mainVBox.getChildren().get(0);
 			
-			mainVBox.getChildren().clear();			
-			mainVBox.getChildren().add(mainMenu);			
+			//EXCLUI TODOS OS FILHOS DA MAINVBOX
+			mainVBox.getChildren().clear();
+			//ADICIONA O MENUBAR, QUE FOI GUARDADO NA MAINMENU
+			mainVBox.getChildren().add(mainMenu);
+			//ADICIONA TODOS OS FILHOS DA TELA QUE VAI SER CARREGADA "absoluteName"
 			mainVBox.getChildren().addAll(newVBox.getChildren());
-			
+	
 			//EXECUTAM A FUNÇÃO PASSADA COMO ARGUMENTO
 			T controller = loader.getController();
 			initializingAction.accept(controller);
 			
 		}catch(IOException e) {
-			Alerts.showAlert("IO Exception", "Error Loading View", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("IO EXCEPTION", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
-		
 	}
-
-	
 }

@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
+	//GUARDA A REFERENCIA DA TELA/CENA PRINCIPAL
 	private static Scene mainScene;
 	
 	@Override
@@ -17,17 +18,24 @@ public class Main extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
 			ScrollPane scrollPane = loader.load();
+			
+			//REDIMENSIONA O SCROOL PANE 
 			scrollPane.setFitToHeight(true);
 			scrollPane.setFitToWidth(true);
+			
+			//CENA
 			mainScene = new Scene(scrollPane);
 			primaryStage.setScene(mainScene);
 			primaryStage.setTitle("Sample JavaFX application");
 			primaryStage.show();
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	//PEGA A REFERENCIA DA CENA PRINCIPAL
 	public static Scene getMainScene() {
 		return mainScene;
 	}
